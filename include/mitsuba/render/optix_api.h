@@ -25,6 +25,7 @@ using OptixAccelPropertyType = int;
 using OptixProgramGroupKind  = int;
 using OptixDeviceContext     = void*;
 using OptixTask              = void*;
+using OptixDenoiser          = void*;
 
 // =====================================================
 //            Commonly used OptiX constants
@@ -83,266 +84,213 @@ using OptixTask              = void*;
 // =====================================================
 
 struct OptixMotionOptions {
-    unsigned short numKeys;
-    unsigned short flags;
-    float timeBegin;
-    float timeEnd;
+unsigned short numKeys;
+unsigned short flags;
+float timeBegin;
+float timeEnd;
 };
 
 struct OptixAccelBuildOptions {
-    unsigned int buildFlags;
-    OptixBuildOperation operation;
-    OptixMotionOptions motionOptions;
+unsigned int buildFlags;
+OptixBuildOperation operation;
+OptixMotionOptions motionOptions;
 };
 
 struct OptixAccelBufferSizes {
-    size_t outputSizeInBytes;
-    size_t tempSizeInBytes;
-    size_t tempUpdateSizeInBytes;
+size_t outputSizeInBytes;
+size_t tempSizeInBytes;
+size_t tempUpdateSizeInBytes;
 };
 
 struct OptixBuildInputTriangleArray {
-    const CUdeviceptr* vertexBuffers;
-    unsigned int numVertices;
-    OptixVertexFormat vertexFormat;
-    unsigned int vertexStrideInBytes;
-    CUdeviceptr indexBuffer;
-    unsigned int numIndexTriplets;
-    OptixIndicesFormat indexFormat;
-    unsigned int indexStrideInBytes;
-    CUdeviceptr preTransform;
-    const unsigned int* flags;
-    unsigned int numSbtRecords;
-    CUdeviceptr sbtIndexOffsetBuffer;
-    unsigned int sbtIndexOffsetSizeInBytes;
-    unsigned int sbtIndexOffsetStrideInBytes;
-    unsigned int primitiveIndexOffset;
-    OptixTransformFormat transformFormat;
+const CUdeviceptr* vertexBuffers;
+unsigned int numVertices;
+OptixVertexFormat vertexFormat;
+unsigned int vertexStrideInBytes;
+CUdeviceptr indexBuffer;
+unsigned int numIndexTriplets;
+OptixIndicesFormat indexFormat;
+unsigned int indexStrideInBytes;
+CUdeviceptr preTransform;
+const unsigned int* flags;
+unsigned int numSbtRecords;
+CUdeviceptr sbtIndexOffsetBuffer;
+unsigned int sbtIndexOffsetSizeInBytes;
+unsigned int sbtIndexOffsetStrideInBytes;
+unsigned int primitiveIndexOffset;
+OptixTransformFormat transformFormat;
 };
 
 struct OptixBuildInputCustomPrimitiveArray {
-    const CUdeviceptr* aabbBuffers;
-    unsigned int numPrimitives;
-    unsigned int strideInBytes;
-    const unsigned int* flags;
-    unsigned int numSbtRecords;
-    CUdeviceptr sbtIndexOffsetBuffer;
-    unsigned int sbtIndexOffsetSizeInBytes;
-    unsigned int sbtIndexOffsetStrideInBytes;
-    unsigned int primitiveIndexOffset;
+const CUdeviceptr* aabbBuffers;
+unsigned int numPrimitives;
+unsigned int strideInBytes;
+const unsigned int* flags;
+unsigned int numSbtRecords;
+CUdeviceptr sbtIndexOffsetBuffer;
+unsigned int sbtIndexOffsetSizeInBytes;
+unsigned int sbtIndexOffsetStrideInBytes;
+unsigned int primitiveIndexOffset;
 };
 
 struct OptixBuildInputInstanceArray {
-    CUdeviceptr instances;
-    unsigned int numInstances;
+CUdeviceptr instances;
+unsigned int numInstances;
 };
 
 struct OptixBuildInput {
-    OptixBuildInputType type;
-    union {
-        OptixBuildInputTriangleArray triangleArray;
-        OptixBuildInputCustomPrimitiveArray customPrimitiveArray;
-        OptixBuildInputInstanceArray instanceArray;
-        char pad[1024];
-    };
+OptixBuildInputType type;
+union {
+    OptixBuildInputTriangleArray triangleArray;
+    OptixBuildInputCustomPrimitiveArray customPrimitiveArray;
+    OptixBuildInputInstanceArray instanceArray;
+    char pad[1024];
+};
 };
 
 struct OptixInstance {
-    float transform[12];
-    unsigned int instanceId;
-    unsigned int sbtOffset;
-    unsigned int visibilityMask;
-    unsigned int flags;
-    OptixTraversableHandle traversableHandle;
-    unsigned int pad[2];
+float transform[12];
+unsigned int instanceId;
+unsigned int sbtOffset;
+unsigned int visibilityMask;
+unsigned int flags;
+OptixTraversableHandle traversableHandle;
+unsigned int pad[2];
 };
 
 struct OptixPayloadType {
-    unsigned int numPayloadValues;
-    const unsigned int *payloadSemantics;
+unsigned int numPayloadValues;
+const unsigned int *payloadSemantics;
 };
 
 struct OptixModuleCompileOptions {
-    int maxRegisterCount;
-    int optLevel;
-    int debugLevel;
-    const void *boundValues;
-    unsigned int numBoundValues;
-    unsigned int numPayloadTypes;
-    OptixPayloadType *payloadTypes;
+int maxRegisterCount;
+int optLevel;
+int debugLevel;
+const void *boundValues;
+unsigned int numBoundValues;
+unsigned int numPayloadTypes;
+OptixPayloadType *payloadTypes;
 };
 
 struct OptixPipelineCompileOptions {
-    int usesMotionBlur;
-    unsigned int traversableGraphFlags;
-    int numPayloadValues;
-    int numAttributeValues;
-    unsigned int exceptionFlags;
-    const char* pipelineLaunchParamsVariableName;
-    unsigned int usesPrimitiveTypeFlags;
+int usesMotionBlur;
+unsigned int traversableGraphFlags;
+int numPayloadValues;
+int numAttributeValues;
+unsigned int exceptionFlags;
+const char* pipelineLaunchParamsVariableName;
+unsigned int usesPrimitiveTypeFlags;
 };
 
 struct OptixAccelEmitDesc {
-    CUdeviceptr result;
-    OptixAccelPropertyType type;
+CUdeviceptr result;
+OptixAccelPropertyType type;
 };
 
 struct OptixProgramGroupSingleModule {
-    OptixModule module;
-    const char* entryFunctionName;
+OptixModule module;
+const char* entryFunctionName;
 };
 
 struct OptixProgramGroupHitgroup {
-    OptixModule moduleCH;
-    const char* entryFunctionNameCH;
-    OptixModule moduleAH;
-    const char* entryFunctionNameAH;
-    OptixModule moduleIS;
-    const char* entryFunctionNameIS;
+OptixModule moduleCH;
+const char* entryFunctionNameCH;
+OptixModule moduleAH;
+const char* entryFunctionNameAH;
+OptixModule moduleIS;
+const char* entryFunctionNameIS;
 };
 
 struct OptixProgramGroupDesc {
-    OptixProgramGroupKind kind;
-    unsigned int flags;
+OptixProgramGroupKind kind;
+unsigned int flags;
 
-    union {
-        OptixProgramGroupSingleModule raygen;
-        OptixProgramGroupSingleModule miss;
-        OptixProgramGroupSingleModule exception;
-        OptixProgramGroupHitgroup hitgroup;
-    };
+union {
+    OptixProgramGroupSingleModule raygen;
+    OptixProgramGroupSingleModule miss;
+    OptixProgramGroupSingleModule exception;
+    OptixProgramGroupHitgroup hitgroup;
+};
 };
 
 struct OptixProgramGroupOptions {
-    OptixPayloadType *payloadType;
+OptixPayloadType *payloadType;
 };
 
 struct OptixShaderBindingTable {
-    CUdeviceptr raygenRecord;
-    CUdeviceptr exceptionRecord;
-    CUdeviceptr  missRecordBase;
-    unsigned int missRecordStrideInBytes;
-    unsigned int missRecordCount;
-    CUdeviceptr  hitgroupRecordBase;
-    unsigned int hitgroupRecordStrideInBytes;
-    unsigned int hitgroupRecordCount;
-    CUdeviceptr  callablesRecordBase;
-    unsigned int callablesRecordStrideInBytes;
-    unsigned int callablesRecordCount;
+CUdeviceptr raygenRecord;
+CUdeviceptr exceptionRecord;
+CUdeviceptr  missRecordBase;
+unsigned int missRecordStrideInBytes;
+unsigned int missRecordCount;
+CUdeviceptr  hitgroupRecordBase;
+unsigned int hitgroupRecordStrideInBytes;
+unsigned int hitgroupRecordCount;
+CUdeviceptr  callablesRecordBase;
+unsigned int callablesRecordStrideInBytes;
+unsigned int callablesRecordCount;
 };
 
-/// Various sizes related to the denoiser.
-///
-/// \see #optixDenoiserComputeMemoryResources()
-struct OptixDenoiserSizes
-{
-    size_t       stateSizeInBytes;
-    size_t       withOverlapScratchSizeInBytes;
-    size_t       withoutOverlapScratchSizeInBytes;
-    unsigned int overlapWindowSizeInPixels;
-};
-
-/// Various parameters used by the denoiser
-///
-/// \see #optixDenoiserInvoke()
-/// \see #optixDenoiserComputeIntensity()
-/// \see #optixDenoiserComputeAverageColor()
-struct OptixDenoiserParams
-{
-    /// if set to nonzero value, denoise alpha channel (if present) in first inputLayer image
-    unsigned int denoiseAlpha;
-
-    /// average log intensity of input image (default null pointer). points to a single float.
-    /// with the default (null pointer) denoised results will not be optimal for very dark or
-    /// bright input images.
-    CUdeviceptr  hdrIntensity;
-
-    /// blend factor.
-    /// If set to 0 the output is 100% of the denoised input. If set to 1, the output is 100% of
-    /// the unmodified input. Values between 0 and 1 will linearly interpolate between the denoised
-    /// and unmodified input.
-    float        blendFactor;
-
-    /// this parameter is used when the OPTIX_DENOISER_MODEL_KIND_AOV model kind is set.
-    /// average log color of input image, separate for RGB channels (default null pointer).
-    /// points to three floats. with the default (null pointer) denoised results will not be
-    /// optimal.
-    CUdeviceptr  hdrAverageColor;
-};
-
-/// Input kinds used by the denoiser.
-///
-/// RGB(A) values less than zero will be clamped to zero.
-/// Albedo values must be in the range [0..1] (values less than zero will be clamped to zero).
-/// The normals must be transformed into screen space. The z component is not used.
-/// \see #OptixDenoiserOptions::inputKind
-enum OptixDenoiserInputKind
-{
-    OPTIX_DENOISER_INPUT_RGB               = 0x2301,
-    OPTIX_DENOISER_INPUT_RGB_ALBEDO        = 0x2302,
-    OPTIX_DENOISER_INPUT_RGB_ALBEDO_NORMAL = 0x2303,
-};
-
-/// Model kind used by the denoiser.
-///
-/// \see #optixDenoiserSetModel()
-enum OptixDenoiserModelKind
-{
-    /// Use the model provided by the associated pointer.  See the programming guide for a
-    /// description of how to format the data.
-    OPTIX_DENOISER_MODEL_KIND_USER = 0x2321,
-
-    /// Use the built-in model appropriate for low dynamic range input.
-    OPTIX_DENOISER_MODEL_KIND_LDR = 0x2322,
-
-    /// Use the built-in model appropriate for high dynamic range input.
-    OPTIX_DENOISER_MODEL_KIND_HDR = 0x2323,
-
-    /// Use the built-in model appropriate for high dynamic range input and support for AOVs
-    OPTIX_DENOISER_MODEL_KIND_AOV = 0x2324,
-
-};
-
-/// Options used by the denoiser
-///
-/// \see #optixDenoiserCreate()
-struct OptixDenoiserOptions
-{
-    /// The kind of denoiser input.
-    OptixDenoiserInputKind inputKind;
-};
-
-/// Pixel formats used by the denoiser.
-///
-/// \see #OptixImage2D::format
 enum OptixPixelFormat
 {
-    OPTIX_PIXEL_FORMAT_HALF3  = 0x2201,  ///< three halfs, RGB
-    OPTIX_PIXEL_FORMAT_HALF4  = 0x2202,  ///< four halfs, RGBA
-    OPTIX_PIXEL_FORMAT_FLOAT3 = 0x2203,  ///< three floats, RGB
-    OPTIX_PIXEL_FORMAT_FLOAT4 = 0x2204,  ///< four floats, RGBA
-    OPTIX_PIXEL_FORMAT_UCHAR3 = 0x2205,  ///< three unsigned chars, RGB
-    OPTIX_PIXEL_FORMAT_UCHAR4 = 0x2206   ///< four unsigned chars, RGBA
+OPTIX_PIXEL_FORMAT_HALF2  = 0x2207,
+OPTIX_PIXEL_FORMAT_HALF3  = 0x2201,
+OPTIX_PIXEL_FORMAT_HALF4  = 0x2202,
+OPTIX_PIXEL_FORMAT_FLOAT2 = 0x2208,
+OPTIX_PIXEL_FORMAT_FLOAT3 = 0x2203,
+OPTIX_PIXEL_FORMAT_FLOAT4 = 0x2204,
+OPTIX_PIXEL_FORMAT_UCHAR3 = 0x2205,
+OPTIX_PIXEL_FORMAT_UCHAR4 = 0x2206
 };
 
-/// Image descriptor used by the denoiser.
-///
-/// \see #optixDenoiserInvoke(), #optixDenoiserComputeIntensity()
-struct OptixImage2D
-{
-    /// Pointer to the actual pixel data.
-    CUdeviceptr data;
-    /// Width of the image (in pixels)
-    unsigned int width;
-    /// Height of the image (in pixels)
-    unsigned int height;
-    /// Stride between subsequent rows of the image (in bytes).
-    unsigned int rowStrideInBytes;
-    /// Stride between subsequent pixels of the image (in bytes).
-    /// For now, only 0 or the value that corresponds to a dense packing of pixels (no gaps) is supported.
-    unsigned int pixelStrideInBytes;
-    /// Pixel format.
-    OptixPixelFormat format;
+struct OptixImage2D {
+CUdeviceptr data;
+unsigned int width;
+unsigned int height;
+unsigned int rowStrideInBytes;
+unsigned int pixelStrideInBytes;
+OptixPixelFormat format;
+};
+
+
+enum OptixDenoiserModelKind {
+OPTIX_DENOISER_MODEL_KIND_LDR = 0x2322,
+OPTIX_DENOISER_MODEL_KIND_HDR = 0x2323,
+OPTIX_DENOISER_MODEL_KIND_AOV = 0x2324,
+OPTIX_DENOISER_MODEL_KIND_TEMPORAL = 0x2325,
+OPTIX_DENOISER_MODEL_KIND_TEMPORAL_AOV = 0x2326,
+};
+
+struct OptixDenoiserOptions {
+unsigned int guideAlbedo;
+unsigned int guideNormal;
+};
+
+struct OptixDenoiserSizes {
+size_t       stateSizeInBytes;
+size_t       withOverlapScratchSizeInBytes;
+size_t       withoutOverlapScratchSizeInBytes;
+unsigned int overlapWindowSizeInPixels;
+};
+
+struct OptixDenoiserParams {
+unsigned int denoiseAlpha;
+CUdeviceptr  hdrIntensity;
+float        blendFactor;
+CUdeviceptr  hdrAverageColor;
+};
+
+struct OptixDenoiserGuideLayer {
+OptixImage2D  albedo;
+OptixImage2D  normal;
+OptixImage2D  flow;
+};
+
+struct OptixDenoiserLayer {
+OptixImage2D  input;
+OptixImage2D  previousOutput;
+OptixImage2D  output;
 };
 
 // =====================================================
@@ -356,24 +304,44 @@ struct OptixImage2D
 #endif
 
 D(optixAccelComputeMemoryUsage, OptixDeviceContext,
-  const OptixAccelBuildOptions *, const OptixBuildInput *, unsigned int,
-  OptixAccelBufferSizes *);
+const OptixAccelBuildOptions *, const OptixBuildInput *, unsigned int,
+OptixAccelBufferSizes *);
 D(optixAccelBuild, OptixDeviceContext, CUstream, const OptixAccelBuildOptions *,
-  const OptixBuildInput *, unsigned int, CUdeviceptr, size_t, CUdeviceptr,
-  size_t, OptixTraversableHandle *, const OptixAccelEmitDesc *, unsigned int);
+const OptixBuildInput *, unsigned int, CUdeviceptr, size_t, CUdeviceptr,
+size_t, OptixTraversableHandle *, const OptixAccelEmitDesc *, unsigned int);
 D(optixModuleCreateFromPTXWithTasks, OptixDeviceContext,
-  const OptixModuleCompileOptions *, const OptixPipelineCompileOptions *,
-  const char *, size_t, char *, size_t *, OptixModule *, OptixTask *);
+const OptixModuleCompileOptions *, const OptixPipelineCompileOptions *,
+const char *, size_t, char *, size_t *, OptixModule *, OptixTask *);
 D(optixModuleGetCompilationState, OptixModule, int *);
 D(optixModuleDestroy, OptixModule);
 D(optixTaskExecute, OptixTask, OptixTask *, unsigned int, unsigned int *);
 D(optixProgramGroupCreate, OptixDeviceContext, const OptixProgramGroupDesc *,
-  unsigned int, const OptixProgramGroupOptions *, char *, size_t *,
-  OptixProgramGroup *);
+unsigned int, const OptixProgramGroupOptions *, char *, size_t *,
+OptixProgramGroup *);
 D(optixProgramGroupDestroy, OptixProgramGroup);
 D(optixSbtRecordPackHeader, OptixProgramGroup, void *);
 D(optixAccelCompact, OptixDeviceContext, CUstream, OptixTraversableHandle,
-  CUdeviceptr, size_t, OptixTraversableHandle *);
+CUdeviceptr, size_t, OptixTraversableHandle *);
+D(optixDenoiserCreate, OptixDeviceContext, OptixDenoiserModelKind,
+  const OptixDenoiserOptions*, OptixDenoiser*);
+D(optixDenoiserDestroy, OptixDenoiser);
+D(optixDenoiserComputeMemoryResources, const OptixDenoiser, unsigned int, unsigned int,
+  OptixDenoiserSizes*);
+D(optixDenoiserSetup, OptixDenoiser, CUstream, unsigned int, unsigned int,
+  CUdeviceptr, size_t, CUdeviceptr, size_t);
+D(optixDenoiserInvoke, OptixDenoiser, CUstream, const OptixDenoiserParams *,
+  CUdeviceptr, size_t, const OptixDenoiserGuideLayer *,
+  const OptixDenoiserLayer *, unsigned int, unsigned int, unsigned int,
+  CUdeviceptr, size_t);
+D(optixDenoiserComputeIntensity, OptixDenoiser, CUstream,
+  const OptixImage2D* inputImage, CUdeviceptr, CUdeviceptr, size_t);
+
+/*
+D(optixDenoiserComputeAverageColor, OptixDenoiser, CUstream,
+  const OptixImage2D*, CUdeviceptr, CUdeviceptr, size_t);
+D(optixDenoiserCreateWithUserModel, OptixDeviceContext, const void*, size_t,
+  OptixDenoiser*);
+*/
 
 #undef D
 
