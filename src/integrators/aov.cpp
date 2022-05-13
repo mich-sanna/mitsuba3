@@ -1,3 +1,4 @@
+#include <mitsuba/render/bsdf.h>
 #include <mitsuba/render/integrator.h>
 #include <mitsuba/render/records.h>
 
@@ -61,6 +62,7 @@ output file.
 
 Currently, the following AOVs types are available:
 
+    - :monosp:`albedo`: Albedo (diffuse reflectance) of the material.
     - :monosp:`depth`: Distance from the pinhole.
     - :monosp:`position`: World space position value.
     - :monosp:`uv`: UV coordinates.
@@ -82,9 +84,10 @@ template <typename Float, typename Spectrum>
 class AOVIntegrator final : public SamplingIntegrator<Float, Spectrum> {
 public:
     MI_IMPORT_BASE(SamplingIntegrator)
-    MI_IMPORT_TYPES(Scene, Sampler, Medium)
+    MI_IMPORT_TYPES(Scene, Sampler, Medium, BSDFPtr)
 
     enum class Type {
+        Albedo,
         Depth,
         Position,
         UV,
@@ -109,7 +112,12 @@ public:
             if (item.size() != 2 || item[0].empty() || item[1].empty())
                 Log(Warn, "Invalid AOV specification: require <name>:<type> pair");
 
-            if (item[1] == "depth") {
+            if (item[1] == "albedo") {
+                m_aov_types.push_back(Type::Albedo);
+                m_aov_names.push_back(item[0] + ".R");
+                m_aov_names.push_back(item[0] + ".G");
+                m_aov_names.push_back(item[0] + ".B");
+            } else if (item[1] == "depth") {
                 m_aov_types.push_back(Type::Depth);
                 m_aov_names.push_back(item[0] + ".T");
             } else if (item[1] == "position") {
@@ -199,6 +207,21 @@ public:
 
         for (size_t i = 0; i < m_aov_types.size(); ++i) {
             switch (m_aov_types[i]) {
+                case Type::Albedo: {
+                    BSDFPtr bsdf = si.bsdf(ray);
+                    Spectrum spec = bsdf->get_diffuse_reflectance(si, active);
+                    if constexpr (is_spectral_v<Spectrum>) {
+                        *aovs++ = dr::select(si.is_valid(), si.t, 0.f);
+                        *aovs++ = dr::select(si.is_valid(), si.t, 0.f);
+                        *aovs++ = dr::select(si.is_valid(), si.t, 0.f);
+                    } else {
+                        Color3f color = spec;
+                        *aovs++ = dr::select(si.is_valid(), color.r(), 0.f);
+                        *aovs++ = dr::select(si.is_valid(), color.g(), 0.f);
+                        *aovs++ = dr::select(si.is_valid(), color.b(), 0.f);
+                    }
+                    break;
+                }
                 case Type::Depth:
                     *aovs++ = dr::select(si.is_valid(), si.t, 0.f);
                     break;
