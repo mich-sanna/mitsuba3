@@ -3,7 +3,10 @@
 
 MI_PY_EXPORT(denoiser) {
     MI_PY_IMPORT_TYPES()
-    m.def("denoise",
+    m.def("denoise_temporal",
+        py::overload_cast<const Bitmap &, const Bitmap &, const Bitmap &, const Bitmap *, const Bitmap *>(&denoise_temporal),
+        "noisy"_a, "flow"_a, "denoised_previous"_a, "albedo"_a = nullptr, "normals"_a = nullptr, D(denoise_temporal))
+    .def("denoise",
         py::overload_cast<const Bitmap &, const std::string&, const std::string&, const std::string&>(&denoise),
         "noisy"_a, "albedo_ch_name"_a = "", "normals_ch_name"_a = "", "noisy_ch_name"_a = "<root>", D(denoise))
     .def("denoise",

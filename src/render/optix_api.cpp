@@ -34,11 +34,6 @@ void optix_initialize() {
     L(optixDenoiserInvoke);
     L(optixDenoiserComputeIntensity);
 
-    /*
-    L(optixDenoiserComputeAverageColor);
-    L(optixDenoiserCreateWithUserModel);
-    */
-
     #undef L
 }
 
