@@ -131,15 +131,9 @@ static const char *__doc_OptixDenoiserLayer_previousOutput = R"doc()doc";
 
 static const char *__doc_OptixDenoiserModelKind = R"doc()doc";
 
-static const char *__doc_OptixDenoiserModelKind_OPTIX_DENOISER_MODEL_KIND_AOV = R"doc()doc";
-
 static const char *__doc_OptixDenoiserModelKind_OPTIX_DENOISER_MODEL_KIND_HDR = R"doc()doc";
 
-static const char *__doc_OptixDenoiserModelKind_OPTIX_DENOISER_MODEL_KIND_LDR = R"doc()doc";
-
 static const char *__doc_OptixDenoiserModelKind_OPTIX_DENOISER_MODEL_KIND_TEMPORAL = R"doc()doc";
-
-static const char *__doc_OptixDenoiserModelKind_OPTIX_DENOISER_MODEL_KIND_TEMPORAL_AOV = R"doc()doc";
 
 static const char *__doc_OptixDenoiserOptions = R"doc()doc";
 
@@ -1930,6 +1924,50 @@ static const char *__doc_mitsuba_DefaultFormatter_set_has_date = R"doc(Should da
 static const char *__doc_mitsuba_DefaultFormatter_set_has_log_level = R"doc(Should log level information be included? The default is yes.)doc";
 
 static const char *__doc_mitsuba_DefaultFormatter_set_has_thread = R"doc(Should thread information be included? The default is yes.)doc";
+
+static const char *__doc_mitsuba_Denoiser = R"doc(OptiX Denoiser)doc";
+
+static const char *__doc_mitsuba_Denoiser_2 = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_3 = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_4 = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_Denoiser = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_class = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_denoise = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_albedo_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_denoiser = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_flow_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_hdr_intensity = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_input_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_normal_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_options = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_output_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_previous_output_data = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_scratch = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_scratch_size = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_state = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_state_size = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_m_temporal = R"doc()doc";
+
+static const char *__doc_mitsuba_Denoiser_to_string = R"doc()doc";
 
 static const char *__doc_mitsuba_DirectionSample =
 R"doc(Record for solid-angle based area sampling techniques
@@ -9279,12 +9317,6 @@ Parameter ``frame``:
     Used to return the computed frame)doc";
 
 static const char *__doc_mitsuba_coordinate_system = R"doc(Complete the set {a} to an orthonormal basis {a, b, c})doc";
-
-static const char *__doc_mitsuba_denoise = R"doc()doc";
-
-static const char *__doc_mitsuba_denoise_2 = R"doc()doc";
-
-static const char *__doc_mitsuba_denoise_temporal = R"doc()doc";
 
 static const char *__doc_mitsuba_depolarizer =
 R"doc(Turn a spectrum into a Mueller matrix representation that only has a
