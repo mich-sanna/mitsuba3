@@ -3,6 +3,7 @@
 #include <mitsuba/core/bitmap.h>
 #include <mitsuba/render/fwd.h>
 #include <mitsuba/render/optix_api.h>
+#include <drjit/tensor.h>
 
 NAMESPACE_BEGIN(mitsuba)
 
@@ -19,13 +20,16 @@ public:
 
     ~Denoiser();
 
-    ref<Bitmap> denoise(const Bitmap &noisy, const Bitmap *albedo = nullptr,
-                        const Bitmap *normals = nullptr,
-                        const Bitmap *previous_denoised = nullptr,
-                        const Bitmap *flow = nullptr);
+    TensorXf denoise(const TensorXf &noisy, const TensorXf *albedo = nullptr,
+                      const TensorXf *normals = nullptr,
+                      const TensorXf *previous_denoised = nullptr,
+                      const TensorXf *flow = nullptr);
 
-    ref<Bitmap> denoise(const Bitmap &noisy, const std::string &albedo_ch = "",
+    ref<Bitmap> denoise(const ref<Bitmap> &noisy,
+                        const std::string &albedo_ch = "",
                         const std::string &normals_ch = "",
+                        const std::string &flow_ch = "",
+                        const std::string &previous_denoised_ch = "",
                         const std::string &noisy_ch = "<root>");
 
     virtual std::string to_string() const override;
@@ -39,12 +43,7 @@ private:
     OptixDenoiserOptions m_options;
     bool m_temporal;
     OptixDenoiser m_denoiser;
-    CUdeviceptr m_input_data;
-    CUdeviceptr m_albedo_data;
-    CUdeviceptr m_normal_data;
     CUdeviceptr m_hdr_intensity;
-    CUdeviceptr m_previous_output_data;
-    CUdeviceptr m_flow_data;
     CUdeviceptr m_output_data;
 };
 

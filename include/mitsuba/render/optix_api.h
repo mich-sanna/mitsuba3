@@ -253,7 +253,6 @@ unsigned int pixelStrideInBytes;
 OptixPixelFormat format;
 };
 
-
 enum OptixDenoiserModelKind {
     OPTIX_DENOISER_MODEL_KIND_HDR = 0x2323,
     OPTIX_DENOISER_MODEL_KIND_TEMPORAL = 0x2325

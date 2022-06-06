@@ -1939,6 +1939,8 @@ static const char *__doc_mitsuba_Denoiser_class = R"doc()doc";
 
 static const char *__doc_mitsuba_Denoiser_denoise = R"doc()doc";
 
+static const char *__doc_mitsuba_Denoiser_denoise1 = R"doc()doc";
+
 static const char *__doc_mitsuba_Denoiser_m_albedo_data = R"doc()doc";
 
 static const char *__doc_mitsuba_Denoiser_m_denoiser = R"doc()doc";
