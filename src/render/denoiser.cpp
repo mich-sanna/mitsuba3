@@ -81,8 +81,6 @@ typename Denoiser<Float, Spectrum>::TensorXf Denoiser<Float, Spectrum>::denoise(
               "different sizes!",
               m_input_size.x(), m_input_size.y());
 
-    // TODO check that input matches current state
-
     OptixDenoiserLayer layers = {};
     OptixPixelFormat input_pixel_format = (noisy.shape(2) == 3)
                                               ? OPTIX_PIXEL_FORMAT_FLOAT3
@@ -117,6 +115,8 @@ typename Denoiser<Float, Spectrum>::TensorXf Denoiser<Float, Spectrum>::denoise(
         // Z=forward) to a right-handed system  with (X=right, Y=up, Z=backward)
         corrected_normals = std::make_unique<TensorXf>(*normals);
 
+        // TODO: Understand if this is necessary or not
+        /*
         UInt32 x_idx = dr::arange<UInt32>(0, corrected_normals->size(), 3);
         Float x_values = dr::gather<Float>(corrected_normals->array(), x_idx);
         dr::scatter(corrected_normals->array(), -x_values, x_idx);
@@ -124,6 +124,7 @@ typename Denoiser<Float, Spectrum>::TensorXf Denoiser<Float, Spectrum>::denoise(
         UInt32 z_idx = dr::arange<UInt32>(2, corrected_normals->size(), 3);
         Float z_values = dr::gather<Float>(corrected_normals->array(), z_idx);
         dr::scatter(corrected_normals->array(), -z_values, z_idx);
+        */
 
         guide_layer.normal = optixImage2DfromTensor<Float, Spectrum>(
             *corrected_normals, OPTIX_PIXEL_FORMAT_FLOAT3);
